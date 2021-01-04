@@ -1,9 +1,9 @@
-一、环境配置
+**一、环境配置**
 1.VScode下载，安装python，chinese，path intellisece, npm, npm intellisence, Vetur, Vue3 Snippets, vscode-icons, live sever 这些插件
 2.配置终端 切换到cmd
 3.安装前端开发工具HbuilderX https://www.dcloud.io/hbuilderx.html
 4.安装小程序开发工具 https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html
-二、安装git
+**二、安装git**
 1.安装git https://git-scm.com
 2.创建远程仓库 myBlog
 
@@ -19,27 +19,62 @@ git add . 追踪所有发生变化的文件
 git commit -m "备注" 提交到本地仓库
 git push -u origin master （第一次提交）推送到远程仓库
 git push （之后提交）
-三、创建myBlog项目
+**三、创建myBlog项目**
 1.空文件下，执行 django-admin startproject myBlog创建myBlog项目
 2.给myBlog创建虚拟环境，使用 python -m venv env(env为虚拟环境名称)
 3.进入虚拟环境，Windows下：.\\env\\Scripts\\activate
 4.退出虚拟环境，Windows下：deactivate
 5.使用VSCode打开myBlog，执行 
+
+```
 python manage.py startapp articles 创建articlesAPP 
 python manage.py startapp users 创建usersAPP
 python manage.py startapp cousers 创建cousersAPP
+```
+
 6.迁移 python manage.py makemigrations
 python manage.py migrate
-四、创建articles的model
+**四、创建articles的model**
 1.创建model
 
-2.数据库同步
-3.在admin.py中注册model
-五、业务逻辑
+```python
+from django.db import models
+from django.contrib.auth.models import User
 
-1、文章列表页，分页
-2、章详情页，评论
-3、全局搜索功能 Q
-4、最新文章，最新评论的排行
-5、按照分类，标签的一个聚类操作
-6、联系我页面，发送邮件
+# Create your models here.
+class Articles(models.Model):
+    title = models.CharField(max_length=128,verbose_name='文章标题')
+    author = models.ForeignKey(User,on_delete=models.CASCADE,verbose_name='文章作者')
+    img = models.ImageField(upload_to="",blank=True,verbose_name='文章插图')
+    abstract = models.TextField(verbose_name='文章摘要')
+    content = models.TextField(verbose_name='文章内容')
+    visited = models.IntegerField(default=0,verbose_name='文章访问量')
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
+    modified_at = models.DateTimeField(auto_now=True,verbose_name='修改时间')
+
+    # 源编程起别名排序
+    class Meta:
+        verbose_name = '文章'
+        verbose_name_plural = verbose_name
+        ordering = ('-created_at',)
+
+
+    def __str__(self):
+        return self.title 
+```
+
+2.数据库同步
+
+```python
+python manage.py makemigration
+python manage.py migtate
+```
+
+3.在admin.py中注册model
+
+```python
+python manage.py  createsuperuser
+账号：admin
+密码：zcx
+```
+
